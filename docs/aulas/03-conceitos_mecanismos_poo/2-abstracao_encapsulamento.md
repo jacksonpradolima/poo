@@ -33,14 +33,16 @@
    5.2. Antipadrões de Encapsulamento: Exposição de Campos, “Setters para Tudo”  
    5.3. Reflexão sobre Coesão e Acoplamento  
 
-6. [Exercícios e Exemplos de Código Comentados](#6)  
+6. [Exemplos de Código Comentados](#6)  
    6.1. Implementando Classes Abstratas e Interfaces em um Cenário Concreto  
    6.2. Restringindo Acesso de Atributos e Métodos (Encapsulamento Forte)  
    6.3. Transformando um Código “Estrutural” em Código “Encapsulado e Abstrato”  
 
-7. [Discussão e Reflexões Finais](#7)  
+7. [Exercícios](#7)  
 
-8. [Referências e Leituras Sugeridas](#8)
+8. [Discussão e Reflexões Finais](#8)  
+
+9. [Referências e Leituras Sugeridas](#9)
 
 ---
 
@@ -262,7 +264,7 @@ Note que `numeroCartao` e `cvv` não são expostos para ninguém de fora. A lóg
 
 ---
 
-## 6. EXERCÍCIOS E EXEMPLOS DE CÓDIGO COMENTADOS
+## 6. EXEMPLOS DE CÓDIGO COMENTADOS
 
 ### 6.1. Implementando Classes Abstratas e Interfaces em um Cenário Concreto
 **Cenário**: Uma aplicação de logística, onde temos diferentes tipos de “Veículo” (Caminhão, Van, Moto) para entrega de produtos.
@@ -400,7 +402,104 @@ Encapsulando, criamos métodos e escondemos detalhes, como mostrado no exemplo a
 
 ---
 
-## 7. DISCUSSÃO E REFLEXÕES FINAIS
+## 7. EXERCÍCIOS
+
+### Exercício 1 – Criando uma Hierarquia com Classe Abstrata
+
+1. **Cenário**: Imagine que você está desenvolvendo um sistema para controlar diferentes tipos de “Jogadores” de um game (ex.: Jogador de futebol, Jogador de xadrez, Jogador de vôlei).  
+2. **Tarefa**:  
+   - Crie uma **classe abstrata** chamada `Jogador` que contenha:  
+     - Atributo `nome` (String).  
+     - Construtor que receba `nome`.  
+     - Um método abstrato `treinar()`.  
+     - Um método concreto `getNome()` que retorne o nome do jogador.  
+   - Em seguida, crie **duas subclasses** concretas: `JogadorFutebol` e `JogadorXadrez`. Cada uma deve implementar o método `treinar()` de forma distinta (por exemplo, `JogadorFutebol` treina “chutes ao gol” e “condicionamento físico”, enquanto `JogadorXadrez` treina “análise de aberturas”, “final de jogo” etc.).  
+3. **Objetivo**:  
+   - Praticar a ideia de **classe abstrata** para representar um conceito genérico (`Jogador`) que não deve ser instanciado diretamente.  
+   - Ver como cada subclasse dá sua **própria implementação** ao método abstrato `treinar()`.  
+4. **Dicas**:  
+   - Mantenha o atributo `nome` como `private`, encapsulado na classe `Jogador`. Se necessário, forneça `getNome()` para permitir acesso controlado.  
+   - Teste criando uma classe `TesteJogadores` com um método `main()`, instanciando `JogadorFutebol` e `JogadorXadrez`, chamando o método `treinar()` em cada instância.
+
+---
+
+### Exercício 2 – Encapsulando o Estado de uma “Agenda de Contatos”
+
+1. **Cenário**: Você está construindo uma **Agenda** que guarda objetos `Contato`. Cada `Contato` tem `nome`, `email`, `telefone`.  
+2. **Problema**: Queremos garantir que, ao cadastrar um contato, o campo `email` seja válido e o `telefone` possua um mínimo de dígitos. Não queremos deixar esses campos públicos.  
+3. **Tarefa**:  
+   - Crie a classe `Contato` com todos os atributos `private`.  
+   - Forneça construtor(es) e os **setters** de modo que, antes de atribuir `email`, seja realizada uma pequena validação (ex.: verificar se contém “@”). Antes de atribuir o `telefone`, verifique se tem pelo menos 8 caracteres (ou o formato adequado). Caso contrário, lance uma exceção ou atribua valores padrão.  
+   - Crie a classe `Agenda`, contendo um `List<Contato>` privado. Ofereça métodos públicos como `adicionarContato(Contato c)` e `removerContato(String email)` (removendo pelo e-mail), sempre aplicando encapsulamento (ou seja, ninguém altera a lista internamente sem passar por esses métodos).  
+4. **Objetivo**:  
+   - Refletir sobre **encapsulamento** de atributos (`nome`, `email`, `telefone`).  
+   - Garantir validação de dados dentro dos setters, evitando que outras partes do código “quebrem” a coerência do objeto.  
+   - Restringir o acesso à lista de contatos na `Agenda`, expondo apenas operações controladas.  
+5. **Dicas**:  
+   - Pode ser interessante criar um método `pesquisarContato(String email)` dentro de `Agenda`, para retornar o contato correspondente. Esse método deve ser `public`, mas a lista em si (`List<Contato>`) continua `private`.  
+   - Tente não fornecer um “getter” que retorne a lista inteira, pois isso pode permitir que o chamador manipule a lista diretamente. Uma alternativa é retornar uma **cópia** ou um **unmodifiableList**.
+
+---
+
+### Exercício 3 – Interface para “Processar Documentos”
+
+1. **Cenário**: Em um escritório virtual, há diferentes tipos de documentos que precisam ser “processados” (ex.: reler, categorizar, extrair texto). Por outro lado, existem documentos de diferentes formatos (PDF, DOC, TXT).  
+2. **Tarefa**:  
+   - Crie uma `interface` chamada `ProcessadorDocumento` que defina um método `processarDocumento(String caminhoArquivo)`.  
+   - Crie classes concretas que **implementam** essa interface: `ProcessadorPDF`, `ProcessadorDOC`, `ProcessadorTXT`. Cada uma deve **encapsular** a forma como processa ou lê aquele tipo de arquivo.  
+   - No método `main()`, crie um código que recebe como parâmetro o tipo do arquivo e instancia o `Processador` adequado. Em seguida, chama `processarDocumento()`.  
+3. **Objetivo**:  
+   - Exercitar a **abstração** via `interface`: a aplicação principal não sabe detalhes de como cada documento é tratado, apenas chama `processarDocumento()`.  
+   - Cada classe concreta implementa o comportamento (encapsula o parsing do arquivo).  
+4. **Dicas**:  
+   - Faça o corpo do método `processarDocumento()` apenas imprimir simulações, como “Lendo PDF…” ou “Processando DOC…”.  
+   - Mostre no console que você consegue trocar `ProcessadorPDF` por `ProcessadorDOC` sem mudar a lógica do código principal (pois tudo depende da `interface`).
+
+---
+
+### Exercício 4 – Classe Abstrata vs. Interface na Modelagem de “Veículos Aquáticos”
+
+1. **Cenário**: Você possui uma classe base `VeiculoMaritimo` que prevê atributos como `nomeEmbarcacao`, `capacidadePassageiros` e métodos como `navegar()` e `ancorar()`. Você também quer que algumas embarcações sejam “Pesqueiras”, ou seja, que tenham um método `pescarPeixe()`.  
+2. **Tarefa**:  
+   - Crie uma **classe abstrata** `VeiculoMaritimo` com:  
+     - `nomeEmbarcacao` (private)  
+     - `capacidadePassageiros` (private)  
+     - Construtor(es) para inicializar esses atributos.  
+     - Método abstrato `navegar()` e um método concreto `ancorar()`.  
+   - Crie duas subclasses concretas: `NavioDeGuerra` e `CruzeiroTuristico`, cada qual implementando `navegar()` de forma distinta (imprima mensagens condizentes com o uso).  
+   - Agora crie uma `interface` chamada `Pesqueiro`, com método `pescarPeixe()`.  
+   - Crie uma classe `BarcoPesqueiro` que **estenda** `VeiculoMaritimo` **e** implemente `Pesqueiro`.  
+3. **Objetivo**:  
+   - Ver como uma **classe abstrata** é usada para unificar comportamento de embarcações, mas não pode ser instanciada diretamente.  
+   - Ver como uma **interface** pode adicionar capacidade extra (“pescarPeixe()”) que nem todas as embarcações possuem.  
+4. **Dicas**:  
+   - Demonstre que você pode ter um `ArrayList<VeiculoMaritimo>` que guarde `NavioDeGuerra`, `CruzeiroTuristico` e `BarcoPesqueiro`. Porém, ao chamar `pescarPeixe()`, você precisa ter referências do tipo `Pesqueiro`.  
+   - Isso exemplifica **polimorfismo** e **abstração**.  
+
+---
+
+### Exercício 5 – Comparando Encapsulamento “Forte” e “Fraco”
+
+1. **Cenário**: Você suspeita que no seu projeto algumas classes expõem atributos com `protected` mesmo quando não há herança ou necessidade real. Outras usam `private` e métodos de domínio.  
+2. **Tarefa**:  
+   - Pegue uma classe hipotética (ex.: `Cliente`) que está assim:  
+     ```java
+     public class Cliente {
+         protected String nome;
+         protected String cpf;
+         protected int idade;
+     }
+     ```
+   - Reescreva-a usando **encapsulamento forte** (atributos `private`) e criando **métodos específicos** para alterações relevantes (ex.: `atualizarDados(String nome, String cpf, int idade)` com validações).  
+3. **Objetivo**:  
+   - Conscientizar sobre o uso indevido de `protected` e a falta de **motivos** para isso em classes que não são projetadas para herança, levando a violações de encapsulamento.  
+4. **Dicas**:  
+   - Justifique **por que** é preferível `private` em muitos cenários, permitindo a classe controlar melhor seu estado.  
+   - Se `nome` ou `cpf` nunca mudam, talvez nem mesmo haja um setter público. A classe poderia receber tais valores apenas no construtor, e pronto.
+
+---
+
+## 8. DISCUSSÃO E REFLEXÕES FINAIS
 
 - **Abstração** e **Encapsulamento** são **pilares fundamentais** de POO que trabalham em conjunto para criar sistemas mais robustos e organizados.  
 - **Abstração** nos permite pensar em termos de “contratos” e “conceitos” ao invés de detalhes de implementação, promovendo baixo acoplamento.  
@@ -411,7 +510,7 @@ Encapsulando, criamos métodos e escondemos detalhes, como mostrado no exemplo a
 
 ---
 
-## 8. REFERÊNCIAS E LEITURAS SUGERIDAS
+## 9. REFERÊNCIAS E LEITURAS SUGERIDAS
 
 1. **“Effective Java”**, Joshua Bloch – Diversos itens discutem práticas de criação de interfaces, classes, encapsulamento.  
 2. **Documentação Oficial da Oracle (Java)**:  

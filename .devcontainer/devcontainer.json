@@ -11,6 +11,9 @@
 			"installMaven": "true",
 			"mavenVersion": "3.8.6",
 			"installGradle": "false"
+		},
+		"ghcr.io/devcontainers/features/node:1": {
+			
 		}
 	},
 

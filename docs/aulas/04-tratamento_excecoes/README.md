@@ -325,7 +325,7 @@ Isso preserva o stack trace e dá contexto adicional.
 
 ## 9. EXERCÍCIOS PROPOSTOS
 
-### 9.1. Exercício Simple
+### 9.1. Exercício Simples
 
 1. **Capturando Input Inválido**     
   - Peça ao usuário que digite um número inteiro (pode usar Scanner).

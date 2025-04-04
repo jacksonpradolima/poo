@@ -1,4 +1,6 @@
-## SUMÁRIO DETALHADO
+# Classes e Objetos
+
+## Sumário
 
 1. [Conceitos Fundamentais de Classes e Objetos](#cap2)  
    1.1. A Ideia de Classe como “Molde”  

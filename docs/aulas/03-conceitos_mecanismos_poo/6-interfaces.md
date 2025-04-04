@@ -1,4 +1,6 @@
-# SUMÁRIO GERAL
+# Interfaces
+
+## Sumário
 
 1. [Visão Geral sobre Interfaces](#cap1)  
    1.1. O que é uma Interface, no Sentido de “Contrato”?  

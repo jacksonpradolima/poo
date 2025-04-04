@@ -1,4 +1,6 @@
-# SUMÁRIO GERAL
+# Tratamento de Exceções
+
+## Sumário 
 
 1. [Conceito Geral de Exceções](#sec1)  
    1.1. Motivação e Origem do Tratamento de Exceções  

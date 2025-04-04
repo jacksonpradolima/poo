@@ -1,4 +1,6 @@
-# SUMÁRIO GERAL
+# Associação, Agregação e Composição
+
+## Sumário
 
 1. [Introdução e Contextualização](#cap1)  
    1.1. Relações Entre Classes e o Papel na Modelagem de Sistemas  

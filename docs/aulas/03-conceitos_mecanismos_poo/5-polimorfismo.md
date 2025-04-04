@@ -1,4 +1,6 @@
-# SUMÁRIO GERAL
+# Polimorfismo
+
+## Sumário
 
 1. [Conceito Geral de Polimorfismo e Objetivos](#cap1)  
    1.1. Origem e Etimologia  

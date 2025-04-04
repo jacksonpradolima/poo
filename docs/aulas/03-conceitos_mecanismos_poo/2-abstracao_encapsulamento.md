@@ -1,4 +1,6 @@
-# SUMÁRIO E ESTRUTURA
+# Abstração e Encapsulamento
+
+## Sumário
 
 1. [Visão Geral: Por que Abstração e Encapsulamento são importantes?](#1)  
    1.1. Contexto: Pilares essenciais da POO  

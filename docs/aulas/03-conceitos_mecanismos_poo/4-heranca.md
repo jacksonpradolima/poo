@@ -1,4 +1,6 @@
-# SUMÁRIO GERAL
+# Herança
+
+## Sumário
 
 1. [Introdução ao Conceito de Herança](#cap1)  
    1.1. Motivação Histórica e Conceitual  

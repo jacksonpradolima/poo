@@ -51,7 +51,6 @@
 
 9. [Exercícios e Projetos Sugeridos](#cap9)  
    9.1. Exercícios Simples  
-   9.2. Exercícios Intermediários     
 
 10. [Referências e Leituras Adicionais](#cap10)  
 
@@ -376,18 +375,6 @@ Como mencionado, define que interfaces devem ser **coesas** e não forçar imple
    - Criar interface `Exibivel` com método `void exibir()`.  
    - Criar duas classes que implementam `Exibivel`: `Relatorio` e `Grafico`. Cada uma imprime algo diferente no `exibir()`.  
    - Criar um método que receba `Exibivel e` e chama `exibir()`.
-
-### 9.2. Exercícios Intermediários
-
-3. **Sistema de Log**  
-   - Interface `Logger` com métodos `info(String msg)`, `warn(String msg)`, `error(String msg)`.  
-   - Implementar `LoggerConsole` (imprime no console) e `LoggerArquivo` (grava em arquivo).  
-   - Crie uma classe `Servico` que recebe um `Logger` no construtor e o usa para imprimir mensagens de log durante sua execução.
-
-4. **Strategy de Ordenação**  
-   - Interface `EstrategiaOrdenacao` com método `ordenar(List<Integer> lista)`.  
-   - Subclasses: `BubbleSort`, `MergeSort`, `QuickSort`.  
-   - Um código principal escolhe a estratégia em runtime e chama `ordenar()`.
 
 ---
 

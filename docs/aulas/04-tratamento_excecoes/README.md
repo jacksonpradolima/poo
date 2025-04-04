@@ -329,11 +329,11 @@ Isso preserva o stack trace e dá contexto adicional.
 
 ### 9.1. Exercício Simples
 
-1. **Capturando Input Inválido**     
-  - Peça ao usuário que digite um número inteiro (pode usar Scanner).
-  - Se ele digitar algo que não seja número, gere ou capture NumberFormatException.
-  - Se a exceção ocorrer, informe: `Valor inválido. Digite novamente`.
-  - Repita até o usuário acertar.
+1. **Capturando Input Inválido**
+   - Peça ao usuário que digite um número inteiro (pode usar Scanner).
+   - Se ele digitar algo que não seja número, gere ou capture NumberFormatException.
+   - Se a exceção ocorrer, informe: `Valor inválido. Digite novamente`.
+   - Repita até o usuário acertar.
 
 ### 9.2. Exercício Intermediário
 

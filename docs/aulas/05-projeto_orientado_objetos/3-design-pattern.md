@@ -438,7 +438,7 @@ public interface FreteStrategy {
 
 ### Passo 3 – Implementar as três estratégias concretas
 
-### 3.1 PAC
+#### 3.1 PAC
 
 ```java
 public class FretePAC implements FreteStrategy {

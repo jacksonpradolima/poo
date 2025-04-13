@@ -160,6 +160,21 @@ classDiagram
 - Alguns objetos devem existir **apenas uma vez** (configuração, cache, pool).  
 - Precisa acesso global, mas sem variáveis globais caóticas.
 
+```mermaid
+classDiagram
+direction LR
+
+Singleton
+
+
+class Singleton {
+ + Instance
+ - Singleton()
+ + GetInstance()
+}
+
+```
+
 ### 3.2 Implementação segura (Java 5+)
 
 ```java
@@ -188,6 +203,10 @@ public enum Configuracao {
 
 ## 4 | STRATEGY
 
+O padrão Strategy é um padrão de design comportamental que permite definir uma família de algoritmos, encapsular cada um como um objeto e torná-los intercambiáveis ​​em tempo de execução. O padrão Strategy permite que o algoritmo varie independentemente dos clientes que o utilizam.
+
+No padrão Strategy, temos um contexto que contém uma referência a uma estratégia. O contexto pode definir uma interface comum a todas as estratégias suportadas. O contexto delega o trabalho à estratégia que implementa o algoritmo. Os clientes podem alterar a estratégia do contexto, o que altera o algoritmo executado pelo contexto.
+
 ### 4.1 Motivação
 - Família de algoritmos que mudam em tempo de execução (ex.: ordenação, cálculo de frete).  
 - Evitar `switch/case` ou herança explosiva.
@@ -196,18 +215,30 @@ public enum Configuracao {
 
 ```mermaid
 classDiagram
-    %% --- Classes / interface ---
-    class Contexto
-    class Estrategia {
-        <<interface>>
-    }
-    class EstrategiaA
-    class EstrategiaB
+direction LR
 
-    %% --- Relações ---
-    Contexto *-- Estrategia : has‑a      %% composição (“possui um”)
-    Estrategia <|-- EstrategiaA
-    Estrategia <|-- EstrategiaB
+Context --> Strategy
+Context *-- Client
+Strategy <|-- ConcreteStrategyA
+Strategy <|-- ConcreteStrategyB
+Strategy <|.. StrategyInterface
+  class Client {
+  }
+  class Context{
+    -strategy:StrategyInterface
+    +setStrategy(strategy: StrategyInterface)
+    +doSomething()
+  }
+  class StrategyInterface{
+    +doSomething()
+  }
+  class ConcreteStrategyA{
+    +doSomething()
+  }
+  class ConcreteStrategyB{
+    +doSomething()
+  }
+
 ```
 
 ### 4.3 Exemplo Java – Cálculo de Imposto
@@ -249,6 +280,8 @@ System.out.println(p.total(v -> v * 0.12)); // lambda (Strategy on‑the‑fly)
 
 ## 5 | OBSERVER
 
+O padrão Observer é um padrão de design comportamental que permite que objetos assinem e recebam notificações de um ou mais publicadores (também conhecidos como sujeitos) quando há uma mudança em seu estado. Esse padrão ajuda a desacoplar o assinante e o publicador, permitindo que evoluam de forma independente, sem a necessidade de consultas constantes.
+
 ### 5.1 Motivação
 - Precisa **notificar** vários objetos quando algo muda, sem acoplamento forte.  
 - Ex.: GUI, eventos de domínio, pub‑sub.
@@ -257,24 +290,31 @@ System.out.println(p.total(v -> v * 0.12)); // lambda (Strategy on‑the‑fly)
 
 ```mermaid
 classDiagram
-    %% --- Classes / interface ---
-    class Subject {
-        +attach()
-        +notify()
-    }
+direction LR
 
-    class Observer {
-        <<interface>>
-        +update()
-    }
-
-    class ConcreteObserver {
-        +update()
-    }
-
-    %% --- Relações ---
-    Subject "1" --> "*" Observer : attach(), notify
-    Observer <|-- ConcreteObserver
+Subject <|-- ConcreteSubject
+Subject *-- Observer
+Observer <|-- ConcreteObserverA
+Observer <|-- ConcreteObserverB
+  class Subject{
+    -observers: Observer[]
+    +attach(observer: Observer)
+    +detach(observer: Observer)
+    +notify()
+  }
+  class ConcreteSubject{
+    +getState()
+    +setState(state: any)
+  }
+  class Observer{
+    +update()
+  }
+  class ConcreteObserverA{
+    +update()
+  }
+  class ConcreteObserverB{
+    +update()
+  }
 ```
 
 ### 5.3 Exemplo Java – Evento de estoque

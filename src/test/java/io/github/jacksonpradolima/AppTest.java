@@ -1,4 +1,4 @@
-package com.mycompany.app;
+package io.github.jacksonpradolima;
 
 import org.junit.Test;
 

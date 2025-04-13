@@ -41,28 +41,24 @@ O livro **“Design Patterns: Elements of Reusable OO Software”** (Gamma et�
 
 ```mermaid
 classDiagram
-    %% --- Classes e membros ---
-    class Creator {
-        +operação()
-        +factoryMethod() Produto
+   direction LR
+
+   ConcreteProduct <.. ConcreteCreator : Creates
+   Product <|-- ConcreteProduct
+   ConcreteCreator --|> Creator
+
+   class Creator {
+       +FactoryMethod()
+   }
+
+   class ConcreteCreator{
+       +FactoryMethod()
+   }
+   class ConcreteProduct{
     }
+   class Product{
+   }
 
-    class ConcreteCreatorA {
-        +factoryMethod() Produto
-    }
-
-    class ConcreteCreatorB {
-        +factoryMethod() Produto
-    }
-
-    %% --- Relações de herança ---
-    Creator <|-- ConcreteCreatorA
-    Creator <|-- ConcreteCreatorB
-
-    %% --- Estereótipos ---
-    class Creator <<creator>>
-    class ConcreteCreatorA <<concreteCreator>>
-    class ConcreteCreatorB <<concreteCreator>>
 ```
 
 ### 2.3 Implementação Java
@@ -104,6 +100,47 @@ Dialog dlg = System.getProperty("os.name").startsWith("Win")
                ? new DialogWindows()
                : new DialogHTML();
 dlg.render();
+```
+
+```mermaid
+classDiagram
+    %% --- Produto e produtos concretos ---
+    class Botao {
+        <<interface>>
+        +render()
+    }
+
+    class BotaoHTML {
+        +render()
+    }
+
+    class BotaoWindows {
+        +render()
+    }
+
+    Botao <|.. BotaoHTML
+    Botao <|.. BotaoWindows
+
+    %% --- Creator e creators concretos ---
+    class Dialog {
+        #criarBotao() Botao
+        +render()
+    }
+
+    class DialogHTML {
+        #criarBotao() Botao
+    }
+
+    class DialogWindows {
+        #criarBotao() Botao
+    }
+
+    Dialog <|-- DialogHTML
+    Dialog <|-- DialogWindows
+
+    %% --- Dependência de criação ---
+    Dialog --> Botao : criarBotao()
+
 ```
 
 ### 2.4 Variações

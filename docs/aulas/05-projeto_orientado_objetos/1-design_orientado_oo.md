@@ -1,4 +1,4 @@
-# SUMÁRIO GERAL
+# Design Orientado a Objetos
 
 1. **Panorama do Design Orientado a Objetos**  
 2. **Coesão**  

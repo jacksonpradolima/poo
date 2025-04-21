@@ -50,7 +50,7 @@
 
 ---
 
-## 1. Introdução a File I/O
+# 1. Introdução a File I/O
 
 ## 1.1 O que é File I/O?
 File I/O (File Input/Output), ou Entrada e Saída de Arquivos, é a capacidade de um programa ler e escrever dados em arquivos armazenados em disco. Essa funcionalidade é essencial para a persistência de dados entre execuções de um programa.
@@ -99,7 +99,7 @@ Esses streams podem ser **orientados a bytes** (para arquivos binários) ou **ca
 
 ---
 
-## 2. Trabalhando com Arquivos Texto
+# 2. Trabalhando com Arquivos Texto
 
 ## 2.1 Classe File
 A classe `java.io.File` representa caminhos e arquivos no sistema de arquivos. Ela não realiza leitura ou escrita diretamente, mas é essencial para verificar, criar e manipular arquivos e diretórios.
@@ -192,7 +192,7 @@ public class EscritaComPrintWriter {
 
 ---
 
-## 3. Trabalhando com Arquivos Binários
+# 3. Trabalhando com Arquivos Binários
 
 ## 3.1 O que é um arquivo binário?
 Diferente de arquivos texto, os arquivos binários armazenam dados na forma de **bytes brutos**, que representam números, imagens, áudio, vídeo ou estruturas complexas. A leitura e escrita nesses arquivos requer cuidado com **codificação, ordem dos bytes e estruturas de dados**.
@@ -244,7 +244,7 @@ public class EscritaBinaria {
 
 ---
 
-## 4. Try-With-Resources
+# 4. Try-With-Resources
 
 ## 4.1 Problema com try/catch tradicional
 ```java
@@ -282,7 +282,7 @@ try (BufferedReader br = new BufferedReader(new FileReader("arquivo.txt"))) {
 
 ---
 
-## 5. Tratamento de Exceções
+# 5. Tratamento de Exceções
 
 ## 5.1 Principais exceções
 - `FileNotFoundException`: arquivo inexistente.
@@ -295,7 +295,7 @@ try (BufferedReader br = new BufferedReader(new FileReader("arquivo.txt"))) {
 
 ---
 
-## 6. Comparação Texto vs Binário
+# 6. Comparação Texto vs Binário
 
 | Critério            | Texto                    | Binário                   |
 |---------------------|---------------------------|----------------------------|
@@ -307,7 +307,7 @@ try (BufferedReader br = new BufferedReader(new FileReader("arquivo.txt"))) {
 
 ---
 
-## 7. Introdução à Serialização
+# 7. Introdução à Serialização
 
 ## 7.1 O que é Serialização?
 Transformar um objeto em uma **sequência de bytes** para:
@@ -322,9 +322,11 @@ Transformar um objeto em uma **sequência de bytes** para:
 
 ---
 
-## 8. Serialização em Java
+# 8. Serialização em Java
 
 ## 8.1 Interface Serializable
+Para que um objeto possa ser transformado em uma sequência de bytes, a classe precisa implementar a interface `java.io.Serializable`. Essa interface é um **marcador** (não possui métodos) e informa à JVM que a classe é elegível para serialização.
+
 ```java
 import java.io.Serializable;
 
@@ -358,9 +360,31 @@ try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("usuario.
 }
 ```
 
+## 8.4 O que acontece se não serializar?
+Se a classe **não implementar `Serializable`**, ao tentar gravar um objeto com `ObjectOutputStream`, será lançada uma exceção do tipo `NotSerializableException`.
+
+```java
+import java.io.*;
+
+class Pessoa {
+    String nome;
+    public Pessoa(String nome) { this.nome = nome; }
+}
+
+public class ExemploErro {
+    public static void main(String[] args) throws IOException {
+        Pessoa p = new Pessoa("Carlos");
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("pessoa.ser"))) {
+            oos.writeObject(p);  // ERRO: NotSerializableException
+        }
+    }
+}
+```
+✅ Portanto, sempre verifique se a classe (e todas as classes que ela referencia) são serializáveis.
+
 ---
 
-## 9. serialVersionUID e transient
+# 9. serialVersionUID e transient
 
 ## 9.1 serialVersionUID
 - Garante que a classe é compatível com a versão do objeto serializado.
@@ -378,7 +402,7 @@ private transient String senha;
 
 ---
 
-## 10. Armadilhas e Boas Práticas
+# 10. Armadilhas e Boas Práticas
 
 ## Armadilhas:
 - Alterar a classe após serializar.
@@ -393,17 +417,63 @@ private transient String senha;
 
 ---
 
-## 11. Estudos de Caso
+# 11. Estudos de Caso
 
-## 11.1 Sistema de cadastro local
-Usuário é salvo entre execuções com serialização automática.
+## 11.1 Estudo de Caso 1: Sistema de Cadastro com Persistência
+**Descrição:**
+Um sistema desktop simples permite cadastrar usuários e salvar as informações entre sessões.
 
-## 11.2 Logs binários
-Soluções críticas podem salvar snapshots de objetos para diagnóstico posterior.
+**Solução:**
+- Criar uma classe `Usuario` que implementa `Serializable`.
+- Armazenar os objetos em um `ArrayList<Usuario>`.
+- Usar `ObjectOutputStream` para salvar e `ObjectInputStream` para restaurar.
+
+```java
+class Usuario implements Serializable {
+    private static final long serialVersionUID = 1L;
+    private String nome;
+    private int idade;
+    // getters e setters
+}
+```
+
+**Benefícios:**
+- Persistência simples sem necessidade de banco de dados.
+- Pode ser incrementado com controle de versão via `serialVersionUID`.
+
+## 11.2 Estudo de Caso 2: Backup de Estado de Aplicação
+**Descrição:**
+Um jogo de xadrez deseja permitir que o usuário salve e carregue a partida.
+
+**Solução:**
+- Classes como `Tabuleiro`, `Peca`, `Jogador` implementam `Serializable`.
+- O estado é serializado a cada jogada ou manualmente pelo jogador.
+
+**Desafio:**
+- Cuidado com referência circular entre objetos (ex: `Peca` referenciar `Tabuleiro` e vice-versa).
+
+**Solução:**
+- Definir estratégia de serialização (usar `transient` ou `writeObject/readObject`).
+
+## 11.3 Estudo de Caso 3: Logs Binários de Sessão
+**Descrição:**
+Um sistema web registra cada ação de um usuário como um objeto `Evento`, que precisa ser persistido para auditoria.
+
+**Solução:**
+- Cada `Evento` é serializável.
+- Eventos são gravados sequencialmente em um arquivo binário com `ObjectOutputStream` em modo de append.
+
+**Benefícios:**
+- Rápido e eficiente para gravação sequencial.
+- Pode ser restaurado em lote para análises.
+
+**Cuidado:**
+- Se o sistema for atualizado e a estrutura de `Evento` mudar, será necessário controlar a compatibilidade via `serialVersionUID`.
+
 
 ---
 
-## 12. Exercícios
+# 12. Exercícios
 
 1. Crie um programa que leia e escreva nomes em um arquivo texto.
 2. Crie uma classe `Produto` serializável e grave-a em disco.
@@ -412,7 +482,7 @@ Soluções críticas podem salvar snapshots de objetos para diagnóstico posteri
 
 ---
 
-## 13. Comparativo com Outras Linguagens
+# 13. Comparativo com Outras Linguagens
 
 | Funcionalidade       | Java                  | Python                   | C#                       |
 |----------------------|------------------------|---------------------------|---------------------------|
@@ -422,7 +492,7 @@ Soluções críticas podem salvar snapshots de objetos para diagnóstico posteri
 
 ---
 
-## 14. Referências
+# 14. Referências
 - Java SE Documentation: https://docs.oracle.com/javase/8/docs/api/
 - Bloch, J. Effective Java (3ª ed.)
 - Clean Code, Robert C. Martin — Capítulo sobre persistência

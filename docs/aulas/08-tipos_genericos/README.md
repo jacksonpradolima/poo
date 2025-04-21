@@ -1,41 +1,65 @@
 # Tipos Genéricos (Generics) em Java
 
-1. Introdução aos Generics
-2. Motivação: Antes e Depois dos Generics
-3. Sintaxe Básica dos Generics
-    - Classes Genéricas
-    - Métodos Genéricos
-    - Interfaces Genéricas
-4. Wildcards (`?`)
-   - Uso Básico de `?`
-   - `? extends` e `? super`
-   - Comparações e Casos de Uso
-5. Bounded Type Parameters
-   - Upper Bounds
-   - Multiple Bounds
-   - Lower Bounds (com `super`)
-6. Generics com Coleções
-   - `List<T>`, `Set<T>`, `Map<K,V>`
-   - Exemplo com `ArrayList`, `HashMap`
-   - Iteração segura e uso com lambdas
-7. Generics em Bibliotecas e Frameworks
-   - Spring
-   - JPA / Hibernate
-   - Gson, Jackson (JSON Binding)
-8. Boas Práticas com Generics
-   - Evitar Casting
-   - Design de APIs
-   - Generalização sem perder clareza
-9. Limitações dos Generics em Java
-   - Type Erasure
-   - Erros em tempo de compilação
-   - Incompatibilidades com arrays
-10. Estudos de Caso
-    - Builder Genérico
-    - Repositório Genérico
-    - Conversor de Tipo
-11. Exercícios Práticos
-12. Referências
+1. **Introdução aos Generics**  
+   1.1 O que são Generics  
+   1.2 Contexto histórico  
+   1.3 Analogia  
+   1.4 Diferença entre parametrização e herança
+
+2. **Motivação: Antes e Depois dos Generics**  
+   2.1 O problema sem Generics  
+   2.2 Solução com Generics  
+   2.3 Analogia ilustrativa  
+   2.4 Impacto nos frameworks e bibliotecas  
+   2.5 Conclusão
+
+3. **Sintaxe Básica dos Generics**  
+   3.1 Classes Genéricas  
+   3.2 Métodos Genéricos  
+   3.3 Interfaces Genéricas  
+   3.4 Inferência de tipo
+
+4. **Wildcards (`?`)**  
+   4.1 Uso Básico de `?`  
+   4.2 `? extends` e `? super`  
+   4.3 Comparações e Casos de Uso
+
+5. **Bounded Type Parameters**  
+   5.1 Upper Bounds  
+   5.2 Multiple Bounds  
+   5.3 Lower Bounds (com `super`)
+
+6. **Generics com Coleções**  
+   6.1 `List<T>`, `Set<T>`, `Map<K,V>`  
+   6.2 Iteração segura e uso com lambdas
+
+7. **Generics em Bibliotecas e Frameworks**  
+   7.1 Spring  
+   7.2 JPA / Hibernate  
+   7.3 Gson e Jackson
+
+8. **Boas Práticas com Generics**  
+   8.1 Evitar casting  
+   8.2 Design de APIs  
+   8.3 Nomenclatura padrão
+
+9. **Limitações dos Generics em Java**  
+   9.1 Type Erasure  
+   9.2 Não é possível usar `new T()`  
+   9.3 Incompatibilidade com arrays
+
+10. **Estudos de Caso**  
+    10.1 Builder Genérico  
+    10.2 Repositório Genérico  
+    10.3 Conversor de Tipo
+
+11. **Exercícios Práticos**  
+    11.1 Classe genérica `Caixa<T>`  
+    11.2 Método genérico `maiorElemento`  
+    11.3 Interface `Conversor<S, T>`  
+    11.4 Uso de `List<? super Integer>`
+
+12. **Referências**
 
 ---
 

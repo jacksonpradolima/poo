@@ -366,9 +366,9 @@ flowchart TD
     B -->|Atribui tarefa| C[Thread 1]
     B -->|Atribui tarefa| D[Thread 2]
     B -->|Atribui tarefa| E[Thread N]
-    C -->|Executa tarefa| F[Resultado]
-    D -->|Executa tarefa| F
-    E -->|Executa tarefa| F
+    C -->|Executa tarefa| F[Resultado 1]
+    D -->|Executa tarefa| F[Resultado 2]
+    E -->|Executa tarefa| F[Resultado N]
 ```
 
 ```java

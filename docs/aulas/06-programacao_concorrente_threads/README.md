@@ -356,9 +356,17 @@ Ocorre quando uma thread **fica esperando indefinidamente por CPU** ou acesso a 
 ### **4. API Executor e Thread Pools**
 
 #### 4.1 O problema de criar muitas threads
-Criar uma nova thread com `new Thread(...).start()` toda vez **não escala bem** — pode esgotar recursos do sistema rapidamente.
+Criar threads manualmente usando `new Thread(...).start()`  pode ser ineficiente e difícil de gerenciar em aplicações maiores. Alguns problemas incluem:
+
+- Sobrecarga de recursos: Criar muitas threads pode consumir muita memória e CPU.
+- Gerenciamento complexo: É difícil controlar o ciclo de vida das threads manualmente.
+- Baixa reutilização: Threads criadas manualmente não são reutilizadas.
+
+Para resolver esses problemas, o Java fornece a API `Executor`, que gerencia um pool de threads para executar tarefas de forma eficiente.
 
 #### 4.2 ExecutorService
+
+O ExecutorService é uma interface da API `java.util.concurrent` que fornece métodos para gerenciar e controlar threads em um pool.
 
 ```java
 import java.util.concurrent.ExecutorService;
@@ -366,33 +374,74 @@ import java.util.concurrent.Executors;
 
 public class ExecutorExemplo {
     public static void main(String[] args) {
+        // Cria um pool fixo de 3 threads
         ExecutorService executor = Executors.newFixedThreadPool(3);
 
+        // Envia 10 tarefas para o pool
         for (int i = 0; i < 10; i++) {
             final int tarefa = i;
             executor.submit(() -> {
-                System.out.println("Executando tarefa " + tarefa);
+                System.out.println("Executando tarefa " + tarefa + " na thread " + Thread.currentThread().getName());
             });
         }
+
+        // Finaliza o executor
+        executor.shutdown();
+    }
+}
+```
+Explicação do Código:
+
+1. Criação do ExecutorService:
+  - `Executors.newFixedThreadPool(3)` cria um pool fixo com 3 threads.
+2. Envio de tarefas:
+  - O método `submit()` envia tarefas para o pool.
+3. Finalização:
+  - O método `shutdown()` encerra o pool após a execução de todas as tarefas.
+
+#### 4.3 Tipos de thread pools
+
+A classe `Executors` fornece métodos para criar diferentes tipos de pools:
+
+
+- `newFixedThreadPool(int nThreads)`: Cria um pool com um número fixo de threads.
+- `newCachedThreadPool()`: Cria um pool com um número dinâmico de threads, ideal para muitas tarefas curtas.
+- `newSingleThreadExecutor()`: Cria um pool com apenas uma thread.
+- `newScheduledThreadPool(int corePoolSize)`: Cria um pool para executar tarefas com agendamento.
+
+
+#### 4.4 Callable e Future
+O Callable é uma interface semelhante ao `Runnable`, mas permite que uma tarefa retorne um valor ou lance exceções. O Future é usado para obter o resultado de uma tarefa executada por um `Callable`.
+
+```java
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
+public class CallableExemplo {
+    public static void main(String[] args) throws Exception {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+
+        // Define uma tarefa que retorna um valor
+        Callable<Integer> tarefa = () -> {
+            System.out.println("Executando tarefa...");
+            return 42; // Retorna um valor
+        };
+
+        // Envia a tarefa para o executor
+        Future<Integer> futuro = executor.submit(tarefa);
+
+        // Obtém o resultado da tarefa
+        Integer resultado = futuro.get();
+        System.out.println("Resultado da tarefa: " + resultado);
 
         executor.shutdown();
     }
 }
 ```
 
-#### 4.3 Tipos de thread pools
-- `newFixedThreadPool(int nThreads)`
-- `newCachedThreadPool()`
-- `newSingleThreadExecutor()`
-- `newScheduledThreadPool(int corePoolSize)`
 
-#### 4.4 Callable e Future
-Permitem que threads **retornem valores**.
-```java
-Callable<Integer> tarefa = () -> 10 + 5;
-Future<Integer> futuro = executor.submit(tarefa);
-Integer resultado = futuro.get();
-```
 
 ---
 
@@ -414,6 +463,15 @@ try {
     lock.unlock();
 }
 ```
+
+Explicação do Código:
+
+1. Callable:
+  - Define uma tarefa que retorna um valor (`42` neste caso).
+2. Future:
+  - O método `get()` bloqueia até que o resultado esteja disponível.
+3. ExecutorService:
+  - Gerencia a execução da tarefa.
 
 ---
 

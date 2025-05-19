@@ -360,17 +360,6 @@ Criar uma nova thread com `new Thread(...).start()` toda vez **não escala bem**
 
 #### 4.2 ExecutorService
 
-```mermaid
-flowchart TD
-    A[ExecutorService] -->|submit()| B[Fila de Tarefas]
-    B -->|Atribui tarefa| C[Thread 1]
-    B -->|Atribui tarefa| D[Thread 2]
-    B -->|Atribui tarefa| E[Thread N]
-    C -->|Executa tarefa| F[Resultado 1]
-    D -->|Executa tarefa| F[Resultado 2]
-    E -->|Executa tarefa| F[Resultado N]
-```
-
 ```java
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;

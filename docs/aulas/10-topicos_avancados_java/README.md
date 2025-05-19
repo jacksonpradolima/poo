@@ -51,6 +51,33 @@ Existem quatro tipos principais de classes internas em Java:
 
 Vamos detalhar cada uma delas.
 
+```mermaid
+classDiagram
+    class ClasseExterna {
+        +atributoExterno
+        +metodoExterno()
+    }
+    class InnerClass {
+        +atributoInterno
+        +metodoInterno()
+    }
+    class StaticNestedClass {
+        +atributoEstatico
+        +metodoEstatico()
+    }
+    class LocalClass {
+        +atributoLocal
+        +metodoLocal()
+    }
+    class AnonymousClass {
+        +metodoAnonimo()
+    }
+    ClasseExterna --> InnerClass : "Inner Class"
+    ClasseExterna --> StaticNestedClass : "Static Nested Class"
+    ClasseExterna --> LocalClass : "Local Class"
+    ClasseExterna --> AnonymousClass : "Anonymous Class"
+```
+
 ## 2.1 Inner Classes (Membro)
 
 ### Conceito
@@ -264,6 +291,16 @@ Reflection é amplamente utilizado em frameworks, bibliotecas de serialização,
 
 ## 4.2 API Reflection: Class, Field, Method
 
+```mermaid
+flowchart TD
+    A[Início] --> B[Obter Classe com Class.forName()]
+    B --> C[Listar Métodos com getDeclaredMethods()]
+    C --> D[Inspecionar Campos com getDeclaredFields()]
+    D --> E[Modificar Campos com setAccessible(true)]
+    E --> F[Invocar Métodos com invoke()]
+    F --> G[Fim]
+```
+
 ### Inspecionando uma classe:
 ```java
 Class<?> clazz = Class.forName("java.util.ArrayList");
@@ -320,6 +357,18 @@ Nesta seção, aplicaremos os conceitos de anotações e reflexão através de c
 ### Cenário
 Desejamos implementar uma solução genérica para log de métodos, sem alterar a lógica interna das classes. Utilizaremos anotações personalizadas e reflexão para identificar métodos que devem ser "interceptados" e registrados no log.
 
+```mermaid
+sequenceDiagram
+    participant Runner
+    participant ClasseAnotada
+    participant MétodoAnotado
+
+    Runner->>ClasseAnotada: Escanear métodos
+    ClasseAnotada-->>Runner: Retornar métodos anotados
+    Runner->>MétodoAnotado: Invocar método
+    MétodoAnotado-->>Runner: Executar lógica
+```
+
 ### Etapa 1: Criar a anotação
 ```java
 @Retention(RetentionPolicy.RUNTIME)
@@ -362,6 +411,7 @@ public class LogRunner {
     }
 }
 ```
+
 
 ### Execução:
 ```java

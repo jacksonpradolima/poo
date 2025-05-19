@@ -47,6 +47,10 @@
 #### 1.1 O que é Concorrência?
 Concorrência é a capacidade de lidar com múltiplas tarefas que ocorrem dentro de um mesmo intervalo de tempo. Ela permite que um sistema lide com várias operações ao mesmo tempo (logicamente), mesmo que um processador execute uma tarefa de cada vez.
 
+
+> **Exemplo Prático**: Um servidor web que processa múltiplas requisições de clientes simultaneamente.
+
+
 Na prática, uma aplicação concorrente pode executar partes do código ao mesmo tempo por meio do uso de **threads**. Essas threads compartilham recursos, permitindo mais agilidade e resposta em aplicações que lidam com várias tarefas simultâneas, como servidores web, jogos e interfaces gráficas.
 
 #### 1.2 Concorrência vs. Paralelismo
@@ -56,6 +60,21 @@ Embora muitos tratem os dois como sinônimos, há distinções fundamentais:
 - **Paralelismo** refere-se à execução física simultânea de várias tarefas, geralmente com uso de múltiplos núcleos ou processadores.
 
 > **Exemplo:** Uma CPU com apenas um núcleo pode ser concorrente, alternando rapidamente entre tarefas. Uma CPU com múltiplos núcleos pode ser paralela, executando múltiplas tarefas ao mesmo tempo.
+
+
+| **Aspecto**         | **Concorrência**                          | **Paralelismo**                          |
+|----------------------|-------------------------------------------|-------------------------------------------|
+| **Definição**        | Estrutura para lidar com múltiplas tarefas | Execução simultânea de múltiplas tarefas  |
+| **Execução Física**  | Não necessariamente simultânea            | Sempre simultânea                         |
+| **Exemplo**          | Alternância rápida entre tarefas          | Tarefas executadas em múltiplos núcleos   |
+
+```mermaid
+flowchart TD
+    A[Concorrência] -->|Alternância| B[Tarefa 1]
+    A -->|Alternância| C[Tarefa 2]
+    D[Paralelismo] -->|Simultâneo| E[Tarefa 1]
+    D -->|Simultâneo| F[Tarefa 2]
+```
 
 #### 1.3 Diferença entre Processos e Threads
 | Característica         | Processo                                  | Thread                                     |
@@ -67,6 +86,8 @@ Embora muitos tratem os dois como sinônimos, há distinções fundamentais:
 | Isolamento             | Total                                      | Parcial                                     |
 
 Threads são preferidas quando se deseja leveza, comunicação mais eficiente e acesso a dados compartilhados.
+
+> **Exemplo Real:**  Um navegador web pode usar processos para abas separadas e threads para carregar imagens em uma aba.
 
 #### 1.4 Vantagens da Concorrência
 - Aumento da performance percebida.
@@ -94,7 +115,8 @@ class MinhaThread extends Thread {
 public class ExemploThread {
     public static void main(String[] args) {
         MinhaThread t1 = new MinhaThread();
-        t1.start(); // Nunca use .run() diretamente
+        t1.start(); // Correto. Nunca use .run() diretamente
+        // t1.run(); // Errado: executa no mesmo thread principal
     }
 }
 ```
@@ -148,6 +170,20 @@ O ciclo de vida de uma thread em Java pode ser representado com os seguintes est
 5. **WAITING / TIMED_WAITING** – Esperando que outra thread a notifique ou esperando por tempo.
 6. **TERMINATED** – A thread completou sua execução.
 
+```mermaid
+stateDiagram-v2
+    [*] --> NEW: Criada
+    NEW --> RUNNABLE: start()
+    RUNNABLE --> RUNNING: Escalonada pelo scheduler
+    RUNNING --> BLOCKED: Esperando recurso
+    RUNNING --> WAITING: Esperando notificação
+    RUNNING --> TIMED_WAITING: Esperando por tempo
+    RUNNING --> TERMINATED: Finalizada
+    BLOCKED --> RUNNABLE: Recurso disponível
+    WAITING --> RUNNABLE: Notificada
+    TIMED_WAITING --> RUNNABLE: Tempo expirado
+```
+
 ```java
 public class EstadosThread {
     public static void main(String[] args) throws InterruptedException {
@@ -168,6 +204,7 @@ public class EstadosThread {
     }
 }
 ```
+
 ---
 
 ### **3. Sincronização em Java**
@@ -177,6 +214,14 @@ Quando múltiplas threads acessam os **mesmos recursos** (como uma variável ou 
 
 #### 3.2 Palavra-chave `synchronized`
 A palavra-chave `synchronized` impede que **mais de uma thread acesse simultaneamente** um bloco de código ou método.
+
+```mermaid
+flowchart TD
+    A[Thread 1] -->|Acessa| B[Recurso Compartilhado]
+    B -->|Bloqueado| C[Thread 2]
+    C -->|Espera| B
+    B -->|Libera| C
+```
 
 ##### 3.2.1 Sincronização em métodos
 ```java
@@ -209,10 +254,61 @@ public class Contador {
 #### 3.3 Race Condition (Condição de Corrida)
 Ocorre quando **duas ou mais threads acessam um recurso compartilhado** e tentam modificar seu estado ao mesmo tempo, produzindo resultados imprevisíveis.
 
-> **Exemplo:** Um banco que desconta saldo de duas transações concorrentes pode gerar saldo incorreto se as operações ocorrerem sem controle.
+```java
+public class ExemploRaceCondition {
+    private int contador = 0;
+
+    public void incrementar() {
+        contador++;
+    }
+
+    public static void main(String[] args) {
+        ExemploRaceCondition exemplo = new ExemploRaceCondition();
+        Thread t1 = new Thread(exemplo::incrementar);
+        Thread t2 = new Thread(exemplo::incrementar);
+        t1.start();
+        t2.start();
+    }
+}
+```
+
+Solução com `synchronized`:
+
+```java
+public class ExemploSincronizado {
+    private int contador = 0;
+
+    public synchronized void incrementar() {
+        contador++;
+    }
+
+    public static void main(String[] args) {
+        ExemploSincronizado exemplo = new ExemploSincronizado();
+        Thread t1 = new Thread(exemplo::incrementar);
+        Thread t2 = new Thread(exemplo::incrementar);
+        t1.start();
+        t2.start();
+    }
+}
+```
+
+> **Exemplo Real:** Um banco que desconta saldo de duas transações concorrentes pode gerar saldo incorreto se as operações ocorrerem sem controle.
+
 
 #### 3.4 Deadlock
 Um **deadlock** acontece quando **duas ou mais threads ficam esperando indefinidamente por recursos que estão bloqueados entre si**.
+
+```mermaid
+sequenceDiagram
+    participant Thread1
+    participant Recurso1
+    participant Recurso2
+    Thread1->>Recurso1: Bloqueia Recurso1
+    Thread1->>Recurso2: Espera Recurso2
+    participant Thread2
+    Thread2->>Recurso2: Bloqueia Recurso2
+    Thread2->>Recurso1: Espera Recurso1
+```
 
 ```java
 public class DeadlockExemplo {
@@ -263,6 +359,18 @@ Ocorre quando uma thread **fica esperando indefinidamente por CPU** ou acesso a 
 Criar uma nova thread com `new Thread(...).start()` toda vez **não escala bem** — pode esgotar recursos do sistema rapidamente.
 
 #### 4.2 ExecutorService
+
+```mermaid
+flowchart TD
+    A[ExecutorService] -->|submit()| B[Fila de Tarefas]
+    B -->|Atribui tarefa| C[Thread 1]
+    B -->|Atribui tarefa| D[Thread 2]
+    B -->|Atribui tarefa| E[Thread N]
+    C -->|Executa| F[Resultado]
+    D -->|Executa| F
+    E -->|Executa| F
+```
+
 ```java
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -322,48 +430,135 @@ try {
 
 ### **6. Padrão Produtor-Consumidor**
 
+O padrão Produtor-Consumidor é um problema clássico de concorrência em que:
+- Produtores geram dados e os colocam em um buffer.
+- Consumidores retiram dados do buffer para processá-los.
+- O desafio é garantir que:
+  - O produtor não insira dados em um buffer cheio.
+  - O consumidor não tente retirar dados de um buffer vazio.
+  - A comunicação entre threads seja feita de forma segura e eficiente.
+
+
+```mermaid
+flowchart TD
+    A[Produtor] -->|Produz item| B[Buffer]
+    B -->|Entrega item| C[Consumidor]
+    C -->|Consome item| D[Processamento]
+    B -->|Bloqueia se cheio| A
+    C -->|Bloqueia se vazio| B
+```
+
+
 #### 6.1 Exemplo com `wait()` e `notify()`
+
+Os métodos `wait()` e `notify()` são usados para coordenar a execução de threads que compartilham um recurso. Eles fazem parte da classe `Object` e só podem ser chamados dentro de blocos ou métodos sincronizados.
+- `wait()`: Faz com que a thread atual espere até que outra thread chame `notify()` ou `notifyAll()` no mesmo objeto monitor.
+- `notify()`: Acorda uma única thread que está esperando no objeto monitor.
+- `notifyAll()`: Acorda todas as threads que estão esperando no objeto monitor.
+
+
+Exemplo explicado:
+
 ```java
 class Buffer {
-    private int dado;
-    private boolean disponivel = false;
+    private int dado; // Armazena o dado produzido
+    private boolean disponivel = false; // Indica se o dado está disponível
 
+    // Método para o produtor inserir um valor no buffer
     public synchronized void produzir(int valor) throws InterruptedException {
-        while (disponivel) wait();
-        dado = valor;
-        disponivel = true;
-        notifyAll();
+        while (disponivel) { // Se o buffer já estiver cheio, espera
+            wait();
+        }
+        dado = valor; // Produz o dado
+        disponivel = true; // Marca o dado como disponível
+        notifyAll(); // Notifica os consumidores que o dado está disponível
     }
 
+    // Método para o consumidor retirar um valor do buffer
     public synchronized int consumir() throws InterruptedException {
-        while (!disponivel) wait();
-        disponivel = false;
-        notifyAll();
-        return dado;
+        while (!disponivel) { // Se o buffer estiver vazio, espera
+            wait();
+        }
+        disponivel = false; // Marca o dado como consumido
+        notifyAll(); // Notifica os produtores que o buffer está vazio
+        return dado; // Retorna o dado consumido
     }
 }
 ```
 
+Explicação do Fluxo:
+- O produtor verifica se o buffer está cheio (`disponivel == true`). Se estiver, ele chama `wait()` e aguarda.
+- Quando o consumidor consome o dado, ele chama `notifyAll()` para acordar o produtor.
+- O consumidor verifica se o buffer está vazio (`disponivel == false`). Se estiver, ele chama `wait()` e aguarda.
+- Quando o produtor insere um novo dado, ele chama `notifyAll()` para acordar o consumidor.
+
+
 #### 6.2 Exemplo com `BlockingQueue`
+
+A classe `BlockingQueue` (disponível no pacote `java.util.concurrent`) simplifica a implementação do padrão Produtor-Consumidor. Ela gerencia automaticamente a sincronização entre threads, eliminando a necessidade de usar `wait()` e `notify()` manualmente.
+
+Principais Características:
+- Bloqueio automático:
+  - O método `put()` bloqueia o produtor se a fila estiver cheia.
+  - O método `take(`) bloqueia o consumidor se a fila estiver vazia.
+- Implementações comuns:
+  - `LinkedBlockingQueue`: Baseada em uma lista encadeada.
+  - `ArrayBlockingQueue`: Baseada em um array fixo.
+
+
 ```java
-BlockingQueue<Integer> fila = new LinkedBlockingQueue<>(10);
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
-Runnable produtor = () -> {
-    try {
-        fila.put(42);
-    } catch (InterruptedException e) {
-        Thread.currentThread().interrupt();
-    }
-};
+public class ProdutorConsumidor {
+    public static void main(String[] args) {
+        BlockingQueue<Integer> fila = new LinkedBlockingQueue<>(10); // Buffer com capacidade de 10 itens
 
-Runnable consumidor = () -> {
-    try {
-        Integer dado = fila.take();
-    } catch (InterruptedException e) {
-        Thread.currentThread().interrupt();
+        // Produtor
+        Runnable produtor = () -> {
+            try {
+                for (int i = 0; i < 10; i++) {
+                    fila.put(i); // Insere o item na fila (bloqueia se estiver cheia)
+                    System.out.println("Produziu: " + i);
+                }
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        };
+
+        // Consumidor
+        Runnable consumidor = () -> {
+            try {
+                for (int i = 0; i < 10; i++) {
+                    int valor = fila.take(); // Retira o item da fila (bloqueia se estiver vazia)
+                    System.out.println("Consumiu: " + valor);
+                }
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        };
+
+        // Inicia as threads
+        new Thread(produtor).start();
+        new Thread(consumidor).start();
     }
-};
+}
 ```
+
+Explicação do Fluxo:
+1. O produtor usa o método put() para inserir itens na fila. Se a fila estiver cheia, ele será bloqueado até que o consumidor retire algum item.
+2. O consumidor usa o método take() para retirar itens da fila. Se a fila estiver vazia, ele será bloqueado até que o produtor insira algum item.
+3. A sincronização é gerenciada automaticamente pela BlockingQueue, tornando o código mais simples e menos propenso a erros.
+
+
+#### 6.3 Comparação `wait()` e `notify()` vs `BlockingQueue`
+
+| Aspecto                  | `wait/notify`                          | `BlockingQueue`                          |
+|--------------------------|-----------------------------------------|------------------------------------------|
+| **Complexidade**         | Alta (requer sincronização manual)     | Baixa (sincronização automática)         |
+| **Legibilidade**         | Menor (código mais verboso)            | Maior (código mais simples)              |
+| **Controle de Buffer**   | Manual                                 | Automático                               |
+| **Uso Recomendado**      | Casos específicos ou legado            | Implementações modernas                  |
 
 ---
 

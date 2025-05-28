@@ -195,104 +195,177 @@ Iterações modernas combinam clareza com alto desempenho e são preferidas em c
 
 # 4. Complexidade de Algoritmos nas Coleções
 
-As operações realizadas sobre coleções têm diferentes níveis de desempenho dependendo da estrutura utilizada. Compreender a **notação assintótica Big-O** é fundamental para escrever código eficiente, especialmente em aplicações que lidam com grandes volumes de dados ou exigem alto desempenho.
+Ao trabalhar com coleções em Java, entender como **operações básicas escalam com o tamanho da entrada** é essencial para escrever código eficiente. Para isso, usamos a **notação Big-O**, que nos ajuda a prever o comportamento de algoritmos conforme a quantidade de dados aumenta — sem depender da máquina onde são executados.
 
-## 4.1 Introdução à Notação Big-O
-A notação Big-O descreve o comportamento de crescimento do tempo de execução ou uso de memória de um algoritmo em função da entrada `n`. Ela expressa o **pior caso** para cada operação e é uma ferramenta essencial para comparar algoritmos de forma independente de implementações específicas ou do poder computacional disponível.
+---
 
-### Como calcular Big-O:
-1. **Identifique o número de operações fundamentais** executadas em função do tamanho da entrada.
-2. **Descarte constantes e coeficientes**, pois a Big-O se preocupa apenas com o crescimento assintótico.
-3. **Conserve apenas o termo dominante**, que cresce mais rápido conforme o tamanho da entrada aumenta.
+## 4.1 Fundamentos da Notação Big-O
 
-### Exemplos:
-- Um loop simples:
+A **notação Big-O** expressa o crescimento do tempo ou memória em função do tamanho da entrada (`n`), focando no **comportamento assintótico** (ou seja, quando `n` cresce muito). Isso é particularmente útil ao projetar aplicações que precisam escalar com segurança.
+
+### Por que Big-O é importante?
+
+* **Evita gargalos**: permite prever operações que podem se tornar lentas com muitos dados.
+* **Ajuda a escolher estruturas ideais**: como `HashSet`, `TreeMap`, `ArrayList`, etc.
+* **Facilita comparação entre algoritmos**: mesmo entre linguagens diferentes.
+
+---
+
+## 4.2 Regras Gerais para Analisar Complexidade
+
+### 1. **Sequência de comandos**
+
+Soma-se as complexidades, mas considera-se apenas o **termo dominante**.
+
 ```java
-for (int i = 0; i < n; i++) {
-    System.out.println(i);
-}
-// O(n)
+for (int i = 0; i < n; i++) {}  // O(n)
+for (int j = 0; j < n; j++) {}  // O(n)
+// Total: O(n + n) → O(n)
 ```
-- Dois loops aninhados:
+
+### 2. **Comandos aninhados**
+
+Multiplica-se as complexidades internas:
+
 ```java
 for (int i = 0; i < n; i++) {
-    for (int j = 0; j < n; j++) {
-        System.out.println(i + "," + j);
+    for (int j = 0; j < n; j++) {}
+}
+// Total: O(n * n) → O(n²)
+```
+
+### 3. **Recursão**
+
+Avalia-se a profundidade e o custo de cada chamada:
+
+```java
+void divide(int n) {
+    if (n <= 1) return;
+    divide(n / 2);
+}
+// Total: O(log n)
+```
+
+---
+
+## 4.3 Tabela de Complexidades Comuns
+
+| Notação      | Nome               | Descrição                                                                              | Exemplo de Aplicação                                          |
+| ------------ | ------------------ | -------------------------------------------------------------------------------------- | ------------------------------------------------------------- |
+| `O(1)`       | Constante          | O tempo de execução não varia com o tamanho da entrada. Ideal para operações pontuais. | Acesso por índice em `ArrayList`, `HashMap.get(key)`          |
+| `O(log n)`   | Logarítmica        | Cresce lentamente, reduzindo a entrada pela metade a cada passo.                       | Busca binária, operações em `TreeMap`/`TreeSet`               |
+| `O(n)`       | Linear             | Tempo cresce proporcionalmente ao número de elementos da coleção.                      | Iteração em `List`, `LinkedList`, `Set`                       |
+| `O(n log n)` | Linear-Logarítmica | Combina divisão e varredura linear. Comum em algoritmos de ordenação eficientes.       | Merge Sort, Quick Sort, `Collections.sort()`                  |
+| `O(n²)`      | Quadrática         | O tempo cresce rapidamente; comum em loops aninhados e comparações entre pares.        | Bubble Sort, Selection Sort, comparação de todos contra todos |
+| `O(2ⁿ)`      | Exponencial        | Tempo dobra a cada novo elemento. Viável apenas para entradas pequenas.                | Geração de subconjuntos, resolução por backtracking           |
+| `O(n!)`      | Fatorial           | Tempo cresce de forma combinatorial. Inviável para grandes entradas.                   | Permutações, problema do Caixeiro Viajante                    |
+
+---
+
+## 4.4 Complexidade nas Estruturas de Coleção
+
+| Estrutura    | Acesso | Busca    | Inserção      | Remoção  | Comentários                         |
+| ------------ | ------ | -------- | ------------- | -------- | ----------------------------------- |
+| `ArrayList`  | O(1)   | O(n)     | O(1) / O(n)\* | O(n)     | Rápido no fim; lento no meio/início |
+| `LinkedList` | O(n)   | O(n)     | O(1)⁑         | O(1)⁑    | Rápido nas extremidades             |
+| `HashSet`    | —      | O(1)†    | O(1)†         | O(1)†    | Depende de função hash              |
+| `TreeSet`    | —      | O(log n) | O(log n)      | O(log n) | Mantém ordenação                    |
+| `HashMap`    | —      | O(1)†    | O(1)†         | O(1)†    | Associativo, rápido                 |
+| `TreeMap`    | —      | O(log n) | O(log n)      | O(log n) | Ordenação por chave                 |
+
+`*` Inserção no meio pode causar deslocamentos.
+`⁑` Inserção/remoção nas extremidades.
+`†` Tempo médio; com colisões, pode degradar para O(n).
+
+---
+
+## 4.5 Casos Específicos de Complexidade
+
+### Inserção ordenada com `ArrayList`:
+
+```java
+int pos = Collections.binarySearch(lista, valor); // O(log n)
+lista.add(pos, valor); // O(n)
+```
+
+### Busca por chave em `HashMap`:
+
+```java
+Integer valor = mapa.get("id"); // O(1) em média
+```
+
+### Inserção ordenada em `TreeSet`:
+
+```java
+set.add(elemento); // O(log n)
+```
+
+---
+
+## 4.6 Complexidades Mais Altas
+
+### `O(2ⁿ)` – Algoritmos Exponenciais
+
+Usado em problemas que avaliam **todas as combinações possíveis**:
+
+```java
+void subconjuntos(String s, String atual, int i) {
+    if (i == s.length()) {
+        System.out.println(atual);
+        return;
+    }
+    subconjuntos(s, atual + s.charAt(i), i + 1); // incluir caractere
+    subconjuntos(s, atual, i + 1);               // excluir caractere
+}
+// Para uma string de tamanho n, gera 2ⁿ subconjuntos.
+```
+
+### `O(n!)` – Algoritmos Fatoriais
+
+Usado para **gerar permutações**:
+
+```java
+void permutar(List<Integer> lista, int i) {
+    if (i == lista.size()) {
+        System.out.println(lista);
+        return;
+    }
+    for (int j = i; j < lista.size(); j++) {
+        Collections.swap(lista, i, j);
+        permutar(lista, i + 1);
+        Collections.swap(lista, i, j);  // desfazer troca
     }
 }
-// O(n²)
-```
-- Um loop com decremento por divisão:
-```java
-for (int i = n; i > 1; i /= 2) {
-    System.out.println(i);
-}
-// O(log n)
-```
-- Uma operação constante:
-```java
-System.out.println("Olá mundo");
-// O(1)
+// Para uma lista de tamanho n, gera n! permutações.
+
 ```
 
-### Regras gerais:
-- **Sequência de comandos:** soma dos tempos → O(f(n)) + O(g(n)) = O(max(f(n), g(n)))
-- **Comandos aninhados:** multiplicação dos tempos → O(f(n) * g(n))
-- **Recursão:** aplicar árvores de recursão ou resolver recorrência (ex: O(2ⁿ), O(n log n))
+> ⚠️ **Evite algoritmos exponenciais e fatoriais para entradas grandes.** Use heurísticas, aproximações ou algoritmos especializados.
 
-Big-O **não mede tempo real**, mas o crescimento em relação à entrada, o que permite prever como o algoritmo escala.
+---
 
-A seguir, veremos a aplicação dessa análise nas coleções da linguagem Java.
-A notação Big-O descreve o comportamento de crescimento do tempo de execução ou uso de memória de um algoritmo em função da entrada `n`. Ela expressa o **pior caso** para cada operação:
+## 4.7 Resumo Visual: Complexidades em Coleções
 
-- `O(1)` – Tempo constante. A operação leva o mesmo tempo independentemente do tamanho da coleção.
-- `O(n)` – Tempo linear. A operação percorre toda a coleção.
-- `O(log n)` – Tempo logarítmico. Algoritmos que reduzem pela metade a cada passo (como árvores balanceadas).
-- `O(n log n)` – Comum em algoritmos de ordenação eficientes.
-- `O(n²)` – Quadrático. Tipicamente representa algoritmos com dois loops aninhados.
+| Operação          | `ArrayList` | `LinkedList` | `HashMap` | `TreeMap` | `HashSet` | `TreeSet` |
+| ----------------- | ----------- | ------------ | --------- | --------- | --------- | --------- |
+| Inserção no fim   | O(1)        | O(1)⁑        | O(1)†     | O(log n)  | O(1)†     | O(log n)  |
+| Inserção ordenada | O(n)        | O(n)         | —         | O(log n)  | —         | O(log n)  |
+| Acesso por índice | O(1)        | O(n)         | —         | —         | —         | —         |
+| Busca por valor   | O(n)        | O(n)         | O(1)†     | O(log n)  | O(1)†     | O(log n)  |
+| Remoção           | O(n)        | O(1)⁑        | O(1)†     | O(log n)  | O(1)†     | O(log n)  |
 
-## 4.2 Complexidade das Estruturas
+---
 
-### 4.2.1 Acesso, Busca, Inserção e Remoção
-| Estrutura       | Acesso por índice | Busca por valor | Inserção (fim/meio) | Remoção (por valor/índice) |
-|-----------------|-------------------|------------------|----------------------|-----------------------------|
-| `ArrayList`     | O(1)              | O(n)             | O(1) / O(n)          | O(n)                        |
-| `LinkedList`    | O(n)              | O(n)             | O(1) (nas extremidades) | O(1) (nas extremidades)  |
-| `HashSet`       | -                 | O(1) (médio)     | O(1) (médio)         | O(1) (médio)                |
-| `TreeSet`       | -                 | O(log n)         | O(log n)             | O(log n)                    |
-| `HashMap`       | -                 | O(1) (chave)     | O(1)                 | O(1)                        |
-| `TreeMap`       | -                 | O(log n)         | O(log n)             | O(log n)                    |
+## 4.8 Conclusão
 
-### 4.2.2 Observações Importantes
-- `HashMap` e `HashSet` usam **tabelas de hash**, e seu desempenho ideal ocorre quando a função hash distribui os elementos uniformemente. Em caso de colisões excessivas, o tempo pode se aproximar de `O(n)`.
-- `TreeSet` e `TreeMap` são implementados como **árvores balanceadas (Red-Black Tree)**, garantindo que as operações básicas ocorram em tempo logarítmico.
-- `LinkedList` é eficiente em inserções e remoções nas extremidades, mas é lenta para acesso aleatório.
+A **eficiência de um algoritmo** está diretamente ligada à **estrutura de dados escolhida**. A seguir algumas recomendações práticas:
 
-## 4.3 Casos Específicos e Comparações
+✅ Use `HashMap`/`HashSet` para buscas rápidas por chave ou valor.
+✅ Use `TreeMap`/`TreeSet` quando a ordenação for essencial.
+✅ Evite `LinkedList` para acessos aleatórios.
+✅ Evite algoritmos com `O(n²)` ou pior sempre que possível.
 
-### Inserção ordenada
-```java
-List<Integer> lista = new ArrayList<>();
-Collections.binarySearch(lista, novoElemento); // O(log n)
-lista.add(posicao, novoElemento); // O(n)
-```
-A busca é eficiente, mas a inserção pode ser custosa se for no início ou meio.
-
-### Busca por chave em HashMap
-```java
-Map<String, Integer> mapa = new HashMap<>();
-Integer valor = mapa.get("chave"); // O(1) em média
-```
-
-### Acesso em TreeMap
-```java
-SortedMap<String, Integer> ordenado = new TreeMap<>();
-ordenado.put("a", 1);
-ordenado.get("a"); // O(log n)
-```
-
-## 4.4 Conclusão da Seção
-A escolha da estrutura correta depende da operação mais comum que será realizada no seu algoritmo. **Sempre que possível, evite estruturas genéricas como `List` para buscas frequentes e prefira `Map` ou `Set` quando o modelo de dados permitir acesso via chave.**
+> ✨ Escolher bem sua estrutura de dados **não é micro-otimização**, é design inteligente.
 
 ---
 

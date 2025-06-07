@@ -302,17 +302,6 @@ Reflection é uma das ferramentas mais poderosas do ecossistema Java, mas també
 
 A base de toda operação de reflection em Java é a classe `Class`. A partir de uma instância dela, podemos acessar os demais componentes:
 
-```mermaid
-flowchart TD
-    A[Início] --> B[Obter Class: Class.forName()]
-    B --> C[getDeclaredMethods()]
-    B --> D[getDeclaredFields()]
-    C --> E[Method.invoke()]
-    D --> F[Field.setAccessible(true)]
-    F --> G[Field.set() / get()]
-    G --> H[Fim]
-```
-
 ### Exemplo: inspecionando uma classe
 
 ```java

@@ -8,11 +8,20 @@
   <name>poo</name>
   <url>https://github.com/jacksonpradolima/poo</url>
   <dependencies>
+    <!-- Dependência do JUnit -->
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.13.2</version>
-      <scope>test</scope>
+        <groupId>org.junit.jupiter</groupId>
+        <artifactId>junit-jupiter</artifactId>
+        <version>5.9.3</version>
+        <scope>test</scope>
+    </dependency>
+
+    <!-- Dependência do Mockito -->
+    <dependency>
+        <groupId>org.mockito</groupId>
+        <artifactId>mockito-core</artifactId>
+        <version>4.11.0</version>
+        <scope>test</scope>
     </dependency>
   </dependencies>
   <properties>
@@ -31,5 +40,31 @@
         </plugin>
       </plugins>
     </pluginManagement>
+    <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>3.0.0-M6</version>
+        </plugin>
+        <plugin>
+          <groupId>org.jacoco</groupId>
+          <artifactId>jacoco-maven-plugin</artifactId>
+          <version>0.8.13</version>
+          <executions>
+            <execution>
+              <goals>
+                <goal>prepare-agent</goal>
+              </goals>
+            </execution>
+            <execution>
+              <id>report</id>
+              <phase>prepare-package</phase>
+              <goals>
+                <goal>report</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+      </plugins>
   </build>
 </project>

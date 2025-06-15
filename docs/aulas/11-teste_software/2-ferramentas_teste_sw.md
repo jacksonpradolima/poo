@@ -1,4 +1,4 @@
-# Aula: Ferramentas de Cobertura e Dublês de Teste
+# Ferramentas de Cobertura e Dublês de Teste
 
 ## Sumário
 1. Introdução

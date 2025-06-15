@@ -27,21 +27,6 @@ JaCoCo é uma ferramenta popular para medir a cobertura de testes em projetos Ja
 Para configurar o JaCoCo em um projeto Maven:
 1. Adicione o plugin JaCoCo ao arquivo `pom.xml`:
 
-#### Explicação do `pom.xml`
-O arquivo `pom.xml` é o coração de um projeto Maven. Ele define as configurações do projeto, incluindo dependências, plugins e propriedades. Aqui está uma explicação detalhada dos elementos usados para configurar o JaCoCo:
-
-- **`<plugin>`**: Define um plugin Maven que será usado no projeto. No caso do JaCoCo, ele é responsável por medir a cobertura de testes.
-- **`<groupId>`**: Identifica o grupo ao qual o plugin pertence. Para o JaCoCo, o grupo é `org.jacoco`.
-- **`<artifactId>`**: Identifica o nome do plugin. O nome do plugin JaCoCo é `jacoco-maven-plugin`.
-- **`<version>`**: Especifica a versão do plugin. É importante usar uma versão estável e atual, como `0.8.13`.
-- **`<executions>`**: Define as etapas em que o plugin será executado.
-  - **`<execution>`**: Representa uma configuração específica de execução do plugin.
-    - **`<goals>`**: Define as metas (ações) que o plugin deve realizar. Para o JaCoCo, usamos:
-      - `prepare-agent`: Configura o agente do JaCoCo para monitorar a execução dos testes.
-      - `report`: Gera o relatório de cobertura após os testes.
-    - **`<phase>`**: Define em qual fase do ciclo de vida do Maven o plugin será executado. Para o relatório do JaCoCo, usamos `prepare-package`.
-
-#### Exemplo de Configuração
 ```xml
 <plugin>
     <groupId>org.jacoco</groupId>
@@ -65,10 +50,27 @@ O arquivo `pom.xml` é o coração de um projeto Maven. Ele define as configura�
 ```
 
 2. Execute os testes e gere o relatório:
+
 ```bash
 mvn clean test jacoco:report
 ```
+
 3. Acesse o relatório gerado na pasta `target/site/jacoco/index.html`.
+
+#### Explicação do `pom.xml`
+O arquivo `pom.xml` é o coração de um projeto Maven. Ele define as configurações do projeto, incluindo dependências, plugins e propriedades. Aqui está uma explicação detalhada dos elementos usados para configurar o JaCoCo:
+
+- **`<plugin>`**: Define um plugin Maven que será usado no projeto. No caso do JaCoCo, ele é responsável por medir a cobertura de testes.
+- **`<groupId>`**: Identifica o grupo ao qual o plugin pertence. Para o JaCoCo, o grupo é `org.jacoco`.
+- **`<artifactId>`**: Identifica o nome do plugin. O nome do plugin JaCoCo é `jacoco-maven-plugin`.
+- **`<version>`**: Especifica a versão do plugin. É importante usar uma versão estável e atual, como `0.8.13`.
+- **`<executions>`**: Define as etapas em que o plugin será executado.
+  - **`<execution>`**: Representa uma configuração específica de execução do plugin.
+    - **`<goals>`**: Define as metas (ações) que o plugin deve realizar. Para o JaCoCo, usamos:
+      - `prepare-agent`: Configura o agente do JaCoCo para monitorar a execução dos testes.
+      - `report`: Gera o relatório de cobertura após os testes.
+    - **`<phase>`**: Define em qual fase do ciclo de vida do Maven o plugin será executado. Para o relatório do JaCoCo, usamos `prepare-package`.
+
 
 ### Interpretação de Relatórios de Cobertura
 Os relatórios do JaCoCo incluem:
@@ -153,6 +155,9 @@ Permite definir expectativas sobre interações: verifica se métodos foram cham
 ### Exemplos Práticos
 
 #### Dummy
+
+Usado apenas para preencher o construtor, pois o método não será chamado.
+
 ```java
 @Test
 void testProcessarPagamentoComDummy() {
@@ -169,6 +174,10 @@ void testProcessarPagamentoComDummy() {
 ```
 
 #### Fake
+
+Implementação funcional simplificada.
+
+
 ```java
 class FakeServicoExterno implements ServicoExterno {
     @Override
@@ -187,6 +196,10 @@ void testProcessarPagamentoComFake() {
 ```
 
 #### Stub
+
+Retorna resposta fixa, independente do valor.
+
+
 ```java
 @Test
 void testProcessarPagamentoComStub() {
@@ -202,6 +215,9 @@ void testProcessarPagamentoComStub() {
 ```
 
 #### Spy
+
+Permite inspecionar chamadas e argumentos.
+
 ```java
 class SpyServicoExterno implements ServicoExterno {
     int chamadas = 0;
@@ -228,6 +244,10 @@ void testProcessarPagamentoComSpy() {
 ```
 
 #### Mock
+
+Permite definir comportamentos e validar interações detalhadas.
+
+
 ```java
 @Test
 void testProcessarPagamentoComMock() {
@@ -242,13 +262,9 @@ void testProcessarPagamentoComMock() {
 }
 ```
 
-## Estudos de Caso
-### Caso 1: Sistema de E-commerce
-Um sistema de e-commerce utilizou o JaCoCo para identificar áreas do código não testadas e os diferentes tipos de dublês de teste para simular interações com serviços de pagamento. Isso resultou em maior cobertura de testes e maior confiabilidade.
-
 ## Exercícios Práticos
 1. Configure o JaCoCo em um projeto Java e gere um relatório de cobertura.
-2. Crie dublês de teste (dummy, fake, stub, spy e mock) para testar um sistema de login.
+2. Crie dublês de teste (dummy, fake, stub, spy e mock) para testar um projeto.
 3. Analise um relatório do JaCoCo e identifique áreas do código que precisam de mais testes.
 
 ## Referências

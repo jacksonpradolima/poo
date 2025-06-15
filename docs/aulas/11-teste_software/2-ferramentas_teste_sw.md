@@ -1,4 +1,4 @@
-# Aula: Ferramentas de Cobertura e Mocks
+# Aula: Ferramentas de Cobertura e Dublês de Teste
 
 ## Sumário
 1. Introdução
@@ -8,25 +8,25 @@
    - Introdução ao Jacoco
    - Configuração do Jacoco em um projeto Java
    - Interpretação de relatórios de cobertura
-5. Mocks e Stubs
-   - Definição e diferenças entre mocks e stubs
-   - Por que usar mocks e stubs
-   - Exemplos simples com Mockito
+5. Dublês de Teste
+   - Tipos de Dublês de Teste
+   - Explicação dos Tipos
+   - Exemplos Práticos
 6. Estudos de Caso
 7. Exercícios Práticos
 8. Referências
 
 ## Introdução
-Nesta aula, exploraremos duas ferramentas essenciais para testes de software: cobertura de testes e mocks. A cobertura de testes ajuda a medir a eficácia dos testes, enquanto os mocks e stubs permitem simular comportamentos de dependências externas, tornando os testes mais robustos e isolados.
+Nesta aula, exploraremos duas ferramentas essenciais para testes de software: cobertura de testes e dublês de teste. A cobertura de testes ajuda a medir a eficácia dos testes, enquanto os dublês de teste permitem simular comportamentos de dependências externas, tornando os testes mais robustos e isolados.
 
 ## Objetivos
 - Ensinar como configurar e interpretar relatórios de ferramentas de cobertura de testes.
-- Apresentar o uso de mocks e stubs, explicando sua importância e fornecendo exemplos práticos.
+- Apresentar os diferentes tipos de dublês de teste, explicando sua importância e fornecendo exemplos práticos.
 
 ## Metodologia
 - Aula expositiva com demonstração prática.
-- Exercícios práticos de configuração do Jacoco e criação de mocks com Mockito.
-- Discussão sobre os benefícios e limitações do uso de mocks e stubs.
+- Exercícios práticos de configuração do Jacoco e criação de dublês de teste.
+- Discussão sobre os benefícios e limitações do uso de dublês de teste.
 
 ## Ferramentas de Cobertura
 ### Introdução ao Jacoco
@@ -126,91 +126,138 @@ O relatório do JaCoCo mostrará quais linhas e ramificações foram cobertas pe
 - **Linha 2**: `throw new IllegalArgumentException("Valor inválido")` - Coberta pelo teste `testProcessarPagamentoComValorInvalido`.
 - **Linha 3**: `return servicoExterno.realizarPagamento(valor)` - Coberta pelo teste `testProcessarPagamentoComMock`.
 
-## Mocks e Stubs
+## Dublês de Teste
 
-Mocks e stubs são ferramentas poderosas para simular dependências externas em testes de software. Elas ajudam a isolar o código em teste, garantindo que ele funcione corretamente sem depender de serviços externos ou partes do sistema que não estão sendo testadas diretamente.
+### Tipos de Dublês de Teste
 
-### O que são Mocks e Stubs?
-- **Mocks**: São objetos simulados que verificam interações com dependências externas. Eles permitem validar se métodos específicos foram chamados com os parâmetros corretos.
-- **Stubs**: São objetos simulados que retornam valores predefinidos. Eles são usados para simular respostas de dependências externas sem verificar interações.
+| Tipo     | Propósito Principal | Complexidade | Exemplo de Uso |
+|----------|--------------------|--------------|----------------|
+| Dummy    | Preencher parâmetros irrelevantes | Muito baixa   | Passar um objeto vazio quando o valor não será usado |
+| Fake     | Implementação funcional simplificada | Baixa         | Banco de dados em memória, servidor HTTP fake |
+| Stub     | Fornecer respostas pré-definidas | Média         | Retornar um valor fixo em um método de serviço |
+| Spy      | Registrar interações para inspeção posterior | Média-alta   | Contar quantas vezes um método foi chamado |
+| Mock     | Validar interações e comportamentos esperados | Alta         | Verificar se um método foi chamado com parâmetros específicos |
 
-### Diferenças entre Mocks e Stubs
-| Característica         | Mocks                          | Stubs                          |
-|------------------------|---------------------------------|---------------------------------|
-| **Propósito**          | Verificar interações           | Simular respostas              |
-| **Validação**          | Confirma chamadas de métodos   | Retorna valores predefinidos   |
-| **Uso comum**          | Testar comportamento           | Testar resultados esperados    |
+---
 
-### Quando usar Mocks e Stubs?
-- **Mocks**: Use quando você precisa verificar como o código interage com dependências externas, como chamadas de métodos ou serviços.
-- **Stubs**: Use quando você precisa simular respostas de dependências externas sem se preocupar com as interações.
+### Explicação dos Tipos
 
-### Exemplos com Mockito
-Mockito é uma biblioteca popular para criar mocks e stubs em Java. Aqui estão exemplos simples:
+**Dummy**  
+Objetos criados apenas para preencher parâmetros obrigatórios, mas que não são usados pelo teste. Exemplo: passar um objeto nulo ou vazio porque o método exige, mas o valor não é relevante para o teste.
 
-#### Exemplo de Mock
-Mocks são usados para verificar interações com dependências externas.
+**Fake**  
+Implementa uma lógica real, porém simplificada, que pode ser usada em testes. Um exemplo clássico é um banco de dados em memória que simula operações de persistência sem acessar um banco real.
+
+**Stub**  
+Fornece respostas pré-definidas para chamadas de métodos, permitindo simular comportamentos de dependências externas. Não verifica interações, apenas retorna valores configurados.
+
+**Spy**  
+Além de fornecer respostas como um stub, também registra informações sobre como foi utilizado, como quantas vezes um método foi chamado ou quais parâmetros foram passados. Útil para verificar efeitos colaterais sem a complexidade de um mock completo.
+
+**Mock**  
+Permite definir expectativas sobre interações: verifica se métodos foram chamados, com quais parâmetros e em qual ordem. É o tipo mais completo e complexo, ideal para validar comportamentos e interações entre componentes.
+
+---
+
+### Exemplos Práticos
+
+#### Dummy
 ```java
-import static org.mockito.Mockito.*;
-import org.junit.jupiter.api.Test;
+@Test
+void testProcessarPagamentoComDummy() {
+    ServicoExterno dummyServico = new ServicoExterno() {
+        @Override
+        public String realizarPagamento(double valor) {
+            throw new UnsupportedOperationException("Não deve ser chamado");
+        }
+    };
+    PagamentoService pagamentoService = new PagamentoService(dummyServico);
 
-public class MockTest {
-    @Test
-    void testMock() {
-        // Criando um mock
-        List<String> mockList = mock(List.class);
-
-        // Definindo comportamento
-        when(mockList.size()).thenReturn(10);
-
-        // Verificando interações
-        mockList.add("Item");
-        verify(mockList).add("Item");
-
-        // Asserções
-        assertEquals(10, mockList.size());
-    }
+    assertThrows(IllegalArgumentException.class, () -> pagamentoService.processarPagamento(0.0));
 }
 ```
 
-#### Exemplo de Stub
-Stubs são usados para simular respostas de dependências externas.
+#### Fake
 ```java
-import static org.mockito.Mockito.*;
-import org.junit.jupiter.api.Test;
-
-public class StubTest {
-    @Test
-    void testStub() {
-        // Criando um stub
-        List<String> stubList = mock(List.class);
-
-        // Definindo comportamento
-        when(stubList.get(0)).thenReturn("Item");
-
-        // Asserções
-        assertEquals("Item", stubList.get(0));
+class FakeServicoExterno implements ServicoExterno {
+    @Override
+    public String realizarPagamento(double valor) {
+        if (valor > 1000) return "Limite excedido";
+        return "Pagamento fake realizado";
     }
+}
+
+@Test
+void testProcessarPagamentoComFake() {
+    PagamentoService pagamentoService = new PagamentoService(new FakeServicoExterno());
+    assertEquals("Pagamento fake realizado", pagamentoService.processarPagamento(500.0));
+    assertEquals("Limite excedido", pagamentoService.processarPagamento(1500.0));
 }
 ```
 
-### Boas Práticas
-1. **Isolamento**: Sempre isole o código em teste das dependências externas.
-2. **Clareza**: Certifique-se de que os mocks e stubs sejam configurados de forma clara e fácil de entender.
-3. **Evite Excesso de Mocks**: Não use mocks para tudo. Apenas simule dependências externas quando necessário.
+#### Stub
+```java
+@Test
+void testProcessarPagamentoComStub() {
+    ServicoExterno stubServico = new ServicoExterno() {
+        @Override
+        public String realizarPagamento(double valor) {
+            return "Pagamento simulado com sucesso";
+        }
+    };
+    PagamentoService pagamentoService = new PagamentoService(stubServico);
+    assertEquals("Pagamento simulado com sucesso", pagamentoService.processarPagamento(50.0));
+}
+```
 
-### Benefícios
-- **Facilidade de Teste**: Permite testar o código sem dependências externas.
-- **Rapidez**: Reduz o tempo de execução dos testes.
-- **Confiabilidade**: Garante que o código funcione corretamente em diferentes cenários.
+#### Spy
+```java
+class SpyServicoExterno implements ServicoExterno {
+    int chamadas = 0;
+    double ultimoValor = 0;
+
+    @Override
+    public String realizarPagamento(double valor) {
+        chamadas++;
+        ultimoValor = valor;
+        return "Spy: pagamento realizado";
+    }
+}
+
+@Test
+void testProcessarPagamentoComSpy() {
+    SpyServicoExterno spyServico = new SpyServicoExterno();
+    PagamentoService pagamentoService = new PagamentoService(spyServico);
+
+    pagamentoService.processarPagamento(200.0);
+
+    assertEquals(1, spyServico.chamadas);
+    assertEquals(200.0, spyServico.ultimoValor);
+}
+```
+
+#### Mock
+```java
+@Test
+void testProcessarPagamentoComMock() {
+    ServicoExterno mockServico = mock(ServicoExterno.class);
+    when(mockServico.realizarPagamento(100.0)).thenReturn("Pagamento realizado com sucesso");
+
+    PagamentoService pagamentoService = new PagamentoService(mockServico);
+    String resultado = pagamentoService.processarPagamento(100.0);
+
+    verify(mockServico).realizarPagamento(100.0);
+    assertEquals("Pagamento realizado com sucesso", resultado);
+}
+```
 
 ## Estudos de Caso
 ### Caso 1: Sistema de E-commerce
-Um sistema de e-commerce utilizou o JaCoCo para identificar áreas do código não testadas e o Mockito para simular interações com serviços de pagamento. Isso resultou em maior cobertura de testes e maior confiabilidade.
+Um sistema de e-commerce utilizou o JaCoCo para identificar áreas do código não testadas e os diferentes tipos de dublês de teste para simular interações com serviços de pagamento. Isso resultou em maior cobertura de testes e maior confiabilidade.
 
 ## Exercícios Práticos
 1. Configure o JaCoCo em um projeto Java e gere um relatório de cobertura.
-2. Crie mocks e stubs usando Mockito para testar um sistema de login.
+2. Crie dublês de teste (dummy, fake, stub, spy e mock) para testar um sistema de login.
 3. Analise um relatório do JaCoCo e identifique áreas do código que precisam de mais testes.
 
 ## Referências
@@ -219,4 +266,4 @@ Um sistema de e-commerce utilizou o JaCoCo para identificar áreas do código n�
 - Livro "Effective Java" de Joshua Bloch
 
 ## Conclusão
-Ferramentas como JaCoCo e Mockito são essenciais para garantir a qualidade e confiabilidade de sistemas. Com elas, você pode medir a eficácia dos testes e simular dependências externas, tornando os testes mais robustos e eficientes.
+Ferramentas como JaCoCo e os diferentes tipos de dublês de teste são essenciais para garantir a qualidade e confiabilidade de sistemas. Com elas, você pode medir a eficácia dos testes e simular dependências externas, tornando os testes mais robustos e eficientes.

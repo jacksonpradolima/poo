@@ -165,3 +165,13 @@ private void validarValor(double valor) {
 - Curva de aprendizado e disciplina necessárias.
 - Comece com pequenos ciclos e aumente a complexidade gradativamente.
 - Use testes como guia para o design do código.
+
+---
+
+## Conclusão
+
+O Desenvolvimento Orientado a Testes (TDD) é uma prática poderosa que não apenas melhora a qualidade do código, mas também promove um design mais simples e modular. Ao adotar o ciclo Red-Green-Refactor, os desenvolvedores podem garantir que o código atenda aos requisitos desde o início, reduzindo bugs e facilitando a manutenção.
+
+Embora o TDD exija disciplina e uma curva de aprendizado inicial, seus benefícios são evidentes em projetos de longo prazo. Testes bem escritos servem como documentação viva, ajudando equipes a entenderem o comportamento do sistema e a evoluírem o código com confiança.
+
+Portanto, ao aplicar as boas práticas discutidas nesta aula e integrar o TDD ao seu fluxo de trabalho, você estará investindo na qualidade e sustentabilidade do seu software. Lembre-se: o esforço inicial compensa com um código mais robusto e confiável.

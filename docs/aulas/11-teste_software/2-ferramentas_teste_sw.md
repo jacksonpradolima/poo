@@ -19,15 +19,6 @@
 ## Introdução
 Nesta aula, exploraremos duas ferramentas essenciais para testes de software: cobertura de testes e dublês de teste. A cobertura de testes ajuda a medir a eficácia dos testes, enquanto os dublês de teste permitem simular comportamentos de dependências externas, tornando os testes mais robustos e isolados.
 
-## Objetivos
-- Ensinar como configurar e interpretar relatórios de ferramentas de cobertura de testes.
-- Apresentar os diferentes tipos de dublês de teste, explicando sua importância e fornecendo exemplos práticos.
-
-## Metodologia
-- Aula expositiva com demonstração prática.
-- Exercícios práticos de configuração do Jacoco e criação de dublês de teste.
-- Discussão sobre os benefícios e limitações do uso de dublês de teste.
-
 ## Ferramentas de Cobertura
 ### Introdução ao Jacoco
 JaCoCo é uma ferramenta popular para medir a cobertura de testes em projetos Java. Ele gera relatórios detalhados que ajudam os desenvolvedores a identificar áreas do código que não estão sendo testadas.
